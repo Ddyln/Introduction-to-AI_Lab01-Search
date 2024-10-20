@@ -1,3 +1,7 @@
-Nodes: 26544
-Time: 0.121 seconds
-Actions: uLulDrrRRRRRRurD
+A*
+Steps: 38
+Weight: 603
+Nodes: 3984
+Time (ms): 18.58 ms
+Memory (MB): 0.92
+rUruLLddlluRRuulDrdLrurDllulDrdrRRRRRR
