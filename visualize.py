@@ -1,6 +1,6 @@
 import tkinter as tk
 import time as TIME
-"kernel/"
+
 sz = 64
 start_x, start_y = 0, 0
 
