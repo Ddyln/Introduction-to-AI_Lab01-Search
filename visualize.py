@@ -47,7 +47,7 @@ def readMap(matrix, file_name):
 file_name = 'input-01.txt'
 matrix = [[]]
 player_pos, stones_pos, switches_pos, walls_pos = readMap(matrix, file_name)
-actions = 'rUruLLddlluRRuulDrdLrurDllulDrdrRRRRRR'
+actions = 'rruLulDrdLLUluRRRRRRRRurDD'
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 actionsMap = 'urdlURDL'
@@ -118,6 +118,8 @@ class CanvasDemo:
                 self.drawCell(self.player_pos, self.player_image)
                 self.animation_state += 1
                 self.root.after(1000, self.animate)
+            else:
+                self.running = False
 
     def drawCell(self, coordinate, image = None):
         y = coordinate[0]
