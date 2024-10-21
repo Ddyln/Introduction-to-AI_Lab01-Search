@@ -48,6 +48,9 @@ file_name = 'input-01.txt'
 matrix = [[]]
 player_pos, stones_pos, switches_pos, walls_pos = readMap(matrix, file_name)
 actions = 'rUruLLddlluRRuulDrdLrurDllulDrdrRRRRRR'
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+actionsMap = 'urdlURDL'
 
 class CanvasDemo:
     def __init__(self, root):
@@ -65,7 +68,7 @@ class CanvasDemo:
         self.block_image = tk.PhotoImage(file="./Assets/block.png")
         for i in range(self.height // sz):
             for j in range(self.width // sz):
-                self.root.after(10, lambda pos=(j,i): self.drawCell(pos))
+                self.root.after(10, lambda pos=(i,j): self.drawCell(pos))
         # print(player_pos)
         self.root.after(20, lambda: self.drawCell(player_pos, self.player_image))
         for i in stones_pos:
@@ -74,35 +77,71 @@ class CanvasDemo:
             self.root.after(20, lambda pos=i: self.drawCell(pos, self.goal_image))
         for i in walls_pos:
             self.root.after(20, lambda pos=i: self.drawCell(pos, self.block_image))
-
-    
+        self.running = False
+        self.player_pos = player_pos 
+        self.animation_state = 0
         self.button = tk.Button(
             root, 
-            text="Click Me", 
-            command=self.change_text,
-            width=4,
+            text="Start", 
+            command=self.start,
+            width=8,
             height=2
         )
         self.button.place(x = sz * 13, y = sz * 5)
+        self.button = tk.Button(
+            root, 
+            text="Stop", 
+            command=self.stop,
+            width=8,
+            height=2
+        )
+        self.button.place(x = sz * 13, y = sz * 6)
 
-    def change_text(self):
-        for c in actions:
-            print(c)
-            TIME.sleep(1)
-        # self.label.config(text="Button clicked! The text has changed.")
-        
+    def start(self):
+        if not self.running:
+            self.running = True
+            self.animate()
+
+    def stop(self):
+        self.running = False
+
+    def animate(self):
+        if self.running:
+            if self.animation_state < len(actions):
+                ok = False
+                for i in switches_pos:
+                    if self.player_pos == [i[0], i[1]]:
+                        ok = True
+                self.drawCell(self.player_pos)
+                if ok: self.drawCell(self.player_pos, self.goal_image)
+                self.player_pos = self.move(self.player_pos, actionsMap.find(actions[self.animation_state]))
+                self.drawCell(self.player_pos, self.player_image)
+                self.animation_state += 1
+                self.root.after(1000, self.animate)
+
     def drawCell(self, coordinate, image = None):
         y = coordinate[0]
         x = coordinate[1]
         if image is None:
-            self.canvas.create_rectangle(start_x + y * sz,
-                                    start_y + x * sz,
-                                    start_x + (y + 1) * sz,
-                                    start_y + (x + 1) * sz, 
+            self.canvas.create_rectangle(start_x + x * sz,
+                                    start_y + y * sz,
+                                    start_x + (x + 1) * sz,
+                                    start_y + (y + 1) * sz, 
                                     fill='gray')
         else:
             self.canvas.create_image(sz // 2 + sz * x, sz // 2 + sz * y, image=image)
 
+    def move(self, coordinate, direction):
+        ok = False
+        if direction > 3:
+            direction -= 4
+            ok = True
+        pos = [coordinate[0] + dx[direction], coordinate[1] + dy[direction]]
+        if ok:
+            self.drawCell(pos)
+            newpos = [pos[0] + dx[direction], pos[1] + dy[direction]]
+            self.drawCell(newpos, self.crate_image)
+        return pos
 
 if __name__ == "__main__":
     root = tk.Tk()
