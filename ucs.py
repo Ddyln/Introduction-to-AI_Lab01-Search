@@ -66,26 +66,8 @@ def checkAllSwitch(stones_info, switches_pos):
     remain = [x for x in stones_info if (x[0], x[1]) not in switches_pos]
     return len(remain) == 0
 
-# def ucs(file_name):
-#     """
-#     actions: chuỗi các hành động, biểu diễn bằng các ký tự uldr: đi bình thường, ULDR: đẩy
-#     steps: số bước đi
-#     weight: tổng trọng số đã đẩy
-#     node: số node của cây mà thuật toán đã tạo ra
-#     time: thời gian chạy thuật toán (ms)
-#     memory: bộ nhớ mà thuật toán đã dùng (MB)
-#     """
-#     actions, steps, weight, node, time, memory = '', 0, 0, 0, 0, 0
-#     # Code
-
-#     return actions, steps, stones_weight, node, time, memory
-
 matrix = [[]] 
 player_pos, stones_info, switches_pos, walls_pos = readMap(matrix, 'input.txt')
-# print(player_pos)
-# print(stones_info)
-# print(switches_pos)
-# print(walls_pos)
 
 actions, steps, stones_weight, node, time, memory = '', 0, 0, 0, 0, 0
 
@@ -101,12 +83,13 @@ while not frontier.is_empty():
     stones_info = topQueue[1]
     stones_weight = topQueue[2]
     actions = topQueue[3]
+    oldcost = topQueue[4]
 
     if (player_pos, stones_info) in explored:
         continue
 
     if checkAllSwitch(stones_info, switches_pos):
-        exit(0)
+        break
     
     explored.add((player_pos, stones_info))
 
@@ -118,17 +101,34 @@ while not frontier.is_empty():
         
         if status == 1:
             continue
+        
+        pushed_stone_weight = 0
+        new_stones_infor = stones_info
+        move_cost = 1
 
         if status == 4:
             new_stones_infor = ()
             for stone in stones_info:
                 if (stone[0], stone[1]) == (x, y):
-                    pushed_stone_infor = stone
+                    # print(type(stone))
+                    pushed_stone_weight = stone[2]
                 else:
                     new_stones_infor += (stone, )
+            move_cost += pushed_stone_weight
 
             # pushed_stone_infor = [i for i in stones_info if (i[0], i[1]) == (x, y)][0][-1]
             # not_pushed_stone_infor = tuple(i for i in stones_info if (i[0], i[1]) != (x, y))
 
-            new_stones_infor += ((x + dx[i], y + dy[i], pushed_stone_infor[2]), ) # (x, y, weight)
-            
+            new_stones_infor += ((x + dx[i], y + dy[i], pushed_stone_weight), )
+        
+        if ((x, y), new_stones_infor) in explored:
+            continue
+
+        frontier.push(((x, y), 
+                       new_stones_infor, 
+                       stones_weight + pushed_stone_weight, 
+                       actions + actionsMap[i + status],
+                       oldcost + stones_weight + move_cost), 
+                       oldcost + stones_weight + move_cost)
+
+print(actions)
