@@ -1,7 +1,7 @@
 A*
-Steps: 26
-Weight: 407
-Nodes: 827
-Time (ms): 3.75 ms
-Memory (MB): 0.39
-rruLulDrdLLUluRRRRRRRRurDD
+Steps: 27
+Weight: 468
+Nodes: 293
+Time (ms): 1.47 ms
+Memory (MB): 0.26
+lluRurDldRRRRRRRlllluLLLulD
