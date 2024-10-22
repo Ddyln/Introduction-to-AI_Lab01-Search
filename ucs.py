@@ -162,7 +162,7 @@ def ucs(file_name = 'input.txt'):
 
 file_name = 'input.txt'
 actions, steps, weight, node, time_taken, memory_consumed = ucs(file_name)
-f = open(file_name.replace('inp', 'out'), 'w')
+f = open(file_name.replace('in', 'out'), 'w')
 f.write('UCS\n')
 sep = '\n'
 f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f} ms{sep}Memory (MB): {memory_consumed / 1e6:.2f}{sep}{actions}")
