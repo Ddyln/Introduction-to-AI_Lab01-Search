@@ -1,6 +1,6 @@
 from PriorityQueue import PriorityQueue
-import time as TIME
-# import psutil
+import time
+import psutil
 
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
@@ -66,69 +66,103 @@ def checkAllSwitch(stones_info, switches_pos):
     remain = [x for x in stones_info if (x[0], x[1]) not in switches_pos]
     return len(remain) == 0
 
-matrix = [[]] 
-player_pos, stones_info, switches_pos, walls_pos = readMap(matrix, 'input.txt')
+def ucs(file_name = 'input.txt'):
+    """
+    actions: chuỗi các hành động, biểu diễn bằng các ký tự uldr: đi bình thường, ULDR: đẩy
+    steps: số bước đi
+    weight: tổng trọng số đã đẩy
+    node: số node của cây mà thuật toán đã tạo ra
+    time: thời gian chạy thuật toán (ms)
+    memory: bộ nhớ mà thuật toán đã dùng (MB)
+    """
+    process = psutil.Process()
 
-actions, steps, stones_weight, node, time, memory = '', 0, 0, 0, 0, 0
+    actions, stones_weight, node = '', 0, 0
 
-frontier = PriorityQueue(typeOfHeap=False)  # Min heap for UCS
+    initial_memory = process.memory_info().rss  # Bộ nhớ sử dụng ban đầu
+  
+    matrix = [[]] 
 
-frontier.push((player_pos, stones_info, stones_weight, actions, 0), 0)
+    player_pos, stones_info, switches_pos, walls_pos = readMap(matrix,file_name)
 
-explored = set()
+    frontier = PriorityQueue(typeOfHeap=False)  # Min heap for UCS
 
-while not frontier.is_empty():
-    topQueue = frontier.pop()
-    player_pos = topQueue[0]
-    stones_info = topQueue[1]
-    stones_weight = topQueue[2]
-    actions = topQueue[3]
-    oldcost = topQueue[4]
+    frontier.push((player_pos, stones_info, stones_weight, actions, 0), 0)
 
-    if (player_pos, stones_info) in explored:
-        continue
+    explored = set()
 
-    if checkAllSwitch(stones_info, switches_pos):
-        break
-    
-    explored.add((player_pos, stones_info))
+    # Bắt đầu đo thời gian
+    start_time = time.time()
 
-    for i in range(4):
-        x = dx[i] + player_pos[0]
-        y = dy[i] + player_pos[1]
+    while not frontier.is_empty():
+        topQueue = frontier.pop()
+        player_pos = topQueue[0]
+        stones_info = topQueue[1]
+        stones_weight = topQueue[2]
+        actions = topQueue[3]
+        oldcost = topQueue[4]
 
-        status = typeOfAction(i, (x, y), stones_info, switches_pos, walls_pos)
-        
-        if status == 1:
-            continue
-        
-        pushed_stone_weight = 0
-        new_stones_infor = stones_info
-        move_cost = 1
-
-        if status == 4:
-            new_stones_infor = ()
-            for stone in stones_info:
-                if (stone[0], stone[1]) == (x, y):
-                    # print(type(stone))
-                    pushed_stone_weight = stone[2]
-                else:
-                    new_stones_infor += (stone, )
-            move_cost += pushed_stone_weight
-
-            # pushed_stone_infor = [i for i in stones_info if (i[0], i[1]) == (x, y)][0][-1]
-            # not_pushed_stone_infor = tuple(i for i in stones_info if (i[0], i[1]) != (x, y))
-
-            new_stones_infor += ((x + dx[i], y + dy[i], pushed_stone_weight), )
-        
-        if ((x, y), new_stones_infor) in explored:
+        if (player_pos, stones_info) in explored:
             continue
 
-        frontier.push(((x, y), 
-                       new_stones_infor, 
-                       stones_weight + pushed_stone_weight, 
-                       actions + actionsMap[i + status],
-                       oldcost + stones_weight + move_cost), 
-                       oldcost + stones_weight + move_cost)
+        if checkAllSwitch(stones_info, switches_pos):
+            break
+        
+        explored.add((player_pos, stones_info))
 
-print(actions)
+        for i in range(4):
+            x = dx[i] + player_pos[0]
+            y = dy[i] + player_pos[1]
+
+            status = typeOfAction(i, (x, y), stones_info, switches_pos, walls_pos)
+            
+            if status == 1:
+                continue
+            
+            pushed_stone_weight = 0
+            new_stones_infor = stones_info
+            move_cost = 1
+
+            if status == 4:
+                new_stones_infor = ()
+                for stone in stones_info:
+                    if (stone[0], stone[1]) == (x, y):
+                        # print(type(stone))
+                        pushed_stone_weight = stone[2]
+                    else:
+                        new_stones_infor += (stone, )
+                move_cost += pushed_stone_weight
+
+                new_stones_infor += ((x + dx[i], y + dy[i], pushed_stone_weight), )
+            
+            if ((x, y), new_stones_infor) in explored:
+                continue
+
+            node += 1
+
+            frontier.push(((x, y), 
+                        new_stones_infor, 
+                        stones_weight + pushed_stone_weight, 
+                        actions + actionsMap[i + status],
+                        oldcost + stones_weight + move_cost), 
+                        oldcost + stones_weight + move_cost)
+            
+    # Kết thúc đo thời gian
+    end_time = time.time()
+    # Kết thúc đo bộ nhớ
+    final_memory = process.memory_info().rss  # Bộ nhớ sử dụng cuối
+
+    # Tính toán thời gian và bộ nhớ tiêu thụ
+    time_taken = end_time - start_time
+    memory_consumed = final_memory - initial_memory
+
+    steps = len(actions)
+
+    return actions, steps, stones_weight, node, time_taken, memory_consumed
+
+file_name = 'input.txt'
+actions, steps, weight, node, time_taken, memory_consumed = ucs(file_name)
+f = open(file_name.replace('inp', 'out'), 'w')
+f.write('UCS\n')
+sep = '\n'
+f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f} ms{sep}Memory (MB): {memory_consumed / 1e6:.2f}{sep}{actions}")
