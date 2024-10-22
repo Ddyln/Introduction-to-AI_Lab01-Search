@@ -1,6 +1,7 @@
 from PriorityQueue import PriorityQueue
 import time as TIME
 import psutil
+from itertools import permutations 
 
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
@@ -47,9 +48,13 @@ def readMap(matrix, file_name):
     return player_pos, stones_pos, switches_pos, walls_pos
 
 def heuristicCost(stones_pos, switches_pos):
-    h = 0
-    for i in range(len(stones_pos)):
-        h += (abs(stones_pos[i][0] - switches_pos[i][0]) + abs(stones_pos[i][1] - switches_pos[i][1])) * stones_pos[i][2]
+    h = 1e18
+    temp = permutations(switches_pos)
+    for a in temp:
+        temp_h = 0
+        for i in range(len(a)):
+            temp_h += (abs(stones_pos[i][0] - a[i][0]) + abs(stones_pos[i][1] - a[i][1])) * stones_pos[i][2]
+        h = min(h, temp_h)
     return h
 
 def typeOfAction(direction, player_pos, stones_pos, switches_pos, walls_pos):
@@ -101,7 +106,8 @@ def a_star(file_name = 'input-01.txt'):
         if (tuple(player_pos), stones_pos) in explored_set:
             continue
         # print(actions, player_pos, stones_pos)
-        g = len([x for x in actions if x == x.lower()])
+        # g = len([x for x in actions if x == x.lower()])
+        g = len(actions)
         explored_set.add((tuple(player_pos), stones_pos))
 
         # Check goal reaching
