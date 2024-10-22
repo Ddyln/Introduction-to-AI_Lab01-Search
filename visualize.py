@@ -47,7 +47,7 @@ def readMap(matrix, file_name):
 file_name = 'input-01.txt'
 matrix = [[]]
 player_pos, stones_pos, switches_pos, walls_pos = readMap(matrix, file_name)
-actions = 'rruLulDrdLLUluRRRRRRRRurDD'
+actions = 'uurDrdLLLUluRRRRRRRRurDD'
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 actionsMap = 'urdlURDL'
