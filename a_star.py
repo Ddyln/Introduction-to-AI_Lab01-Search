@@ -92,7 +92,7 @@ def a_star(file_name = 'input-01.txt'):
     matrix = [[]]
     player_pos, stones_pos, switches_pos, walls_pos = readMap(matrix, file_name)
     frontier = PriorityQueue(0)
-    frontier.push((player_pos, stones_pos, actions, weight), 0)    
+    frontier.push((player_pos, stones_pos, actions, weight, 0), 0)    
     explored_set = set()
     time = TIME.time()
     max_memory = memory
@@ -103,11 +103,12 @@ def a_star(file_name = 'input-01.txt'):
         stones_pos = topQueue[1]
         actions = topQueue[2]
         weight = topQueue[3]
+        g = topQueue[4]
         if (tuple(player_pos), stones_pos) in explored_set:
             continue
         # print(actions, player_pos, stones_pos)
         # g = len([x for x in actions if x == x.lower()])
-        g = len(actions)
+        # g = len(actions)
         explored_set.add((tuple(player_pos), stones_pos))
 
         # Check goal reaching
@@ -127,6 +128,7 @@ def a_star(file_name = 'input-01.txt'):
                 continue
             new_stones_pos = stones_pos
             new_weight = weight
+            pushed_stones_weight = 0.1
             if t == 4:
                 pushed_stones_weight = [i for i in new_stones_pos if (i[0], i[1]) == (x, y)][0][-1]
                 new_stones_pos = tuple(i for i in new_stones_pos if (i[0], i[1]) != (x, y))
@@ -137,11 +139,14 @@ def a_star(file_name = 'input-01.txt'):
             if ((x, y), tuple(new_stones_pos)) in explored_set:
                 continue
             node += 1
+            g += pushed_stones_weight
             frontier.push(([x, y], 
                             new_stones_pos, 
                             actions + actionsMap[i + t],
-                            new_weight), 
-                            g + 1 + heuristicCost(stones_pos, switches_pos))
+                            new_weight,
+                            g), 
+                            g + heuristicCost(stones_pos, switches_pos))
+                            # heuristicCost(stones_pos, switches_pos))
     return actions, weight, node, time, memory
 
 file_name = 'input-01.txt'
