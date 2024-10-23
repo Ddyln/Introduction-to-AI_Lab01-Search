@@ -160,9 +160,10 @@ def dfs(file_name):
         steps = len(actions)
     return actions, steps , weight, node, time, memory
 
-file_name = 'input1.txt'
-actions, steps, weight, node, time, memory = dfs(file_name)
-f = open(file_name.replace('in', 'out'), 'w')
-f.write('DFS\n')
-sep = '\n'
-f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f} ms{sep}Memory (MB): {memory / 1e6:.2f}{sep}{actions}")
+if __name__ == '__main__':
+    file_name = 'input-01.txt'
+    actions, steps, weight, node, time, memory = dfs(file_name)
+    f = open(file_name.replace('in', 'out'), 'w')
+    f.write('DFS\n')
+    sep = '\n'
+    f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f} ms{sep}Memory (MB): {memory / 1e6:.2f}{sep}{actions}")
