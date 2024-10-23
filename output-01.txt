@@ -1,0 +1,7 @@
+DFS
+Steps: 50
+Weight: 893
+Nodes: 555
+Time (ms): 5.89 ms
+Memory (MB): 0.26
+uuuldDuurdddLuuurdddrUdluuurDDuuldddRRRRRR
