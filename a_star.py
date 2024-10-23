@@ -48,7 +48,6 @@ def readMap(matrix, file_name):
     return player_pos, stones_pos, switches_pos, walls_pos
 
 def heuristicCost(stones_pos, switches_pos):
-    # return 0
     h = 1e18
     temp = permutations(switches_pos)
     for a in temp:
@@ -108,11 +107,8 @@ def a_star(file_name = 'input-01.txt'):
         g = topQueue[4]
         if (tuple(player_pos), stones_pos) in explored_set:
             continue
-        # cnt += 1
-        # print(actions, player_pos, stones_pos, g)
-        # if cnt > 20:
-        #     break
-        # g = weight + len([x for x in actions if x == x.lower()])
+        # print(actions, player_pos, stones_pos)
+        # g = len([x for x in actions if x == x.lower()])
         # g = len(actions)
         explored_set.add((tuple(player_pos), stones_pos))
 
@@ -133,7 +129,7 @@ def a_star(file_name = 'input-01.txt'):
                 continue
             new_stones_pos = stones_pos
             new_weight = weight
-            pushed_stones_weight = 1
+            pushed_stones_weight = 0.1
             if t == 4:
                 pushed_stones_weight = [i for i in new_stones_pos if (i[0], i[1]) == (x, y)][0][-1]
                 new_stones_pos = tuple(i for i in new_stones_pos if (i[0], i[1]) != (x, y))
@@ -151,6 +147,7 @@ def a_star(file_name = 'input-01.txt'):
                             new_weight,
                             g), 
                             g + heuristicCost(stones_pos, switches_pos))
+                            # heuristicCost(stones_pos, switches_pos))
     return actions, weight, node, time, memory
 
 file_name = 'input-01.txt'
