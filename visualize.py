@@ -53,7 +53,7 @@ file_name = 'input-01.txt'
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 
-class CanvasDemo:
+class App:
     def __init__(self, root):
         self.root = root
         self.width = 64 * 15
@@ -202,5 +202,5 @@ class CanvasDemo:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = CanvasDemo(root)
+    app = App(root)
     root.mainloop()
