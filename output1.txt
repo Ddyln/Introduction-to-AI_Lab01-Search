@@ -1,0 +1,7 @@
+DFS
+Steps: 5
+Weight: 2
+Nodes: 25
+Time (ms): 0.26 ms
+Memory (MB): 0.00
+RR
