@@ -2,12 +2,12 @@ from PriorityQueue import PriorityQueue
 from a_star import a_star
 from dfs import dfs
 from ucs import ucs
-import visualize
+import visualize as vsl
 import sys
 import os
 
 def visualize():
-    visualize.run()
+    vsl.run()
 
 def runAll():
     for i in range(1, 11):
