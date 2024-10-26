@@ -68,7 +68,6 @@ class App:
         # self.canvas.create_line(768, 0, 768, 640)
         self.root.title("Search Visualization")
         self.player_image = tk.PhotoImage(file="./Assets/player.png")
-        self.ground_image = tk.PhotoImage(file="./Assets/ground.png")
         self.crate_image = tk.PhotoImage(file="./Assets/crate.png")
         self.goal_image = tk.PhotoImage(file="./Assets/goal.png")
         self.block_image = tk.PhotoImage(file="./Assets/block.png")
@@ -265,7 +264,7 @@ class App:
                 self.animation_state += 1
                 self.root.after(self.speed, self.animate)
             else:
-                self.loading_label.config(text="Status: Done")
+                self.loading_label.config(text="Status: Done!")
                 self.running = False
 
     def drawCell(self, coordinate, image = None):
