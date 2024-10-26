@@ -143,7 +143,7 @@ def ucs(file_name = 'input.txt'):
             
             pushed_stone_weight = 0
             new_stones_infor = stones_info
-            move_cost = 1   # Normal move cost
+            move_cost = 0.01   # Normal move cost
 
             # If a stone is pushed
             if status == 4:
@@ -185,9 +185,9 @@ def ucs(file_name = 'input.txt'):
 
     return actions, steps, stones_weight, node, time_taken, memory_consumed
 
-file_name = 'input.txt'
+file_name = 'input-01.txt'
 actions, steps, weight, node, time_taken, memory_consumed = ucs(file_name)
 f = open(file_name.replace('in', 'out'), 'w')
 f.write('UCS\n')
-sep = '\n'
-f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f} ms{sep}Memory (MB): {memory_consumed / 1e6:.2f}{sep}{actions}")
+sep = ', '
+f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f} ms{sep}Memory (MB): {memory_consumed / 1e6:.2f}{'\n'}{actions}")
