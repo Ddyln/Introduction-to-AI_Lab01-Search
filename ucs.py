@@ -52,6 +52,7 @@ def readMap(matrix, file_name):
             elif matrix[i][j] == '+': # Player + Switch
                 matrix[i][j] = 6
                 player_pos = (i, j)
+                switches_pos += ((i, j), )
     return player_pos, stones_info, switches_pos, walls_pos
 
 def typeOfAction(direction, player_pos, stones_info, switches_pos, walls_pos):
@@ -193,4 +194,4 @@ if __name__ == '__main__':
     f = open(file_name.replace('in', 'out'), 'w')
     f.write('UCS\n')
     sep = '\n'
-    f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f} ms{sep}Memory (MB): {memory_consumed / 1e6:.2f}{sep}{actions}")
+    f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f}{sep}Memory (MB): {memory_consumed / 1e6:.2f}{sep}{actions}")
