@@ -185,7 +185,7 @@ def ucs(file_name = 'input.txt'):
 
     return actions, steps, stones_weight, node, time_taken, memory_consumed
 
-file_name = 'input-01.txt'
+file_name = 'input-10.txt'
 actions, steps, weight, node, time_taken, memory_consumed = ucs(file_name)
 f = open(file_name.replace('in', 'out'), 'w')
 f.write('UCS\n')
