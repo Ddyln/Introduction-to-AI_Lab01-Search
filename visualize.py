@@ -1,5 +1,6 @@
 import tkinter as tk
 import time as TIME
+import threading
 from tkinter import ttk
 from a_star import a_star
 from ucs import ucs
@@ -61,7 +62,10 @@ class App:
         self.canvas = tk.Canvas(root, width=self.width, height=self.height, bg='gray')
         self.root.resizable(False, False)
         self.canvas.pack()
-        self.canvas.create_line(768, 0, 768, 640)
+        for i in range(10):
+            for j in range(12):
+                self.drawCell((i, j))
+        # self.canvas.create_line(768, 0, 768, 640)
         self.root.title("Search Visualization")
         self.player_image = tk.PhotoImage(file="./Assets/player.png")
         self.ground_image = tk.PhotoImage(file="./Assets/ground.png")
@@ -76,12 +80,21 @@ class App:
 
         self.button = tk.Button(
             root, 
+            text="Load", 
+            command=self.load,
+            width=8,
+            height=1
+        )
+        self.button.place(x = sz * 13.1, y = sz * 2.35)
+        
+        self.button = tk.Button(
+            root, 
             text="Start", 
             command=self.start,
             width=8,
             height=2
         )
-        self.button.place(x = sz * 12.25, y = sz * 7)
+        self.button.place(x = sz * 12.25, y = sz * 7.25)
         
         self.button = tk.Button(
             root, 
@@ -90,7 +103,7 @@ class App:
             width=8,
             height=2
         )
-        self.button.place(x = sz * 13.75, y = sz * 7)
+        self.button.place(x = sz * 13.75, y = sz * 7.25)
 
         self.button = tk.Button(
             root, 
@@ -99,7 +112,7 @@ class App:
             width=8,
             height=2
         )
-        self.button.place(x = sz * 12.25, y = sz * 8.25)
+        self.button.place(x = sz * 12.25, y = sz * 8.5)
         
         self.button = tk.Button(
             root, 
@@ -108,7 +121,7 @@ class App:
             width=8,
             height=2
         )
-        self.button.place(x = sz * 13.75, y = sz * 8.25)
+        self.button.place(x = sz * 13.75, y = sz * 8.5)
 
         self.algorithm_label = tk.Label(root, 
             text="Select Algorithm",
@@ -125,7 +138,7 @@ class App:
         self.actions = ''
         self.algorithm_combobox.set("select")  # Set default value
         self.algorithm_combobox.place(x=sz * 12 + sz * 3 // 4, y=sz * 0.75)
-        self.algorithm_combobox.bind("<<ComboboxSelected>>", self.on_algorithm_selected)
+        # self.algorithm_combobox.bind("<<ComboboxSelected>>", self.on_algorithm_selected)
         # self.on_algorithm_selected(tk.Event())
 
         self.input_label = tk.Label(root, 
@@ -133,7 +146,7 @@ class App:
             font=("Arial bold", 13),
             background='gray'
         )
-        self.input_label.place(x=sz * 12.75, y=sz * 1.5)
+        self.input_label.place(x=sz * 12.75, y=sz * 1.25)
         self.input_combobox = ttk.Combobox(root, 
             values=["Input-01", "Input-02"], 
             state='readonly',
@@ -141,8 +154,7 @@ class App:
             font=("Arial", 12)
         )
         self.input_combobox.set("select")  # Set default value
-        self.input_combobox.place(x=sz * 12 + sz * 3 // 4, y=sz * 2)
-        self.input_combobox.bind("<<ComboboxSelected>>", self.on_input_selected)
+        self.input_combobox.place(x=sz * 12 + sz * 3 // 4, y=sz * 1.75)
         self.info_label = tk.Label(
             root, 
             text="Steps:\n\nWeight:\n\nNode:\n\nTime:\n\nMemory:",
@@ -151,12 +163,48 @@ class App:
             justify="left",
             wraplength=170
         )
-        self.info_label.place(x = 12.2 * sz, y = 3 * sz)
+        self.info_label.place(x = 12.2 * sz, y = 3.5 * sz)
+        self.loading = False
 
-    def on_input_selected(self, event):
+        self.loading_label = tk.Label(
+            root,
+            text = 'Status: ',
+            font=("Arial bold", 13),
+            background='gray',
+        )
+        self.loading_label.place(x = 12.5 * sz, y = 3 * sz)
+        self.dots = 0
+
+    def load(self):
         self.file_name = self.input_combobox.get() + '.txt'
-        self.root.after(0, self.restart)
-        self.root.after(0, lambda event = tk.Event(): self.on_algorithm_selected(event))
+        selected_algorithm = self.algorithm_combobox.get()
+        if self.file_name == 'select.txt' or selected_algorithm == 'select': return
+        self.loading = True
+        self.run_loading_animation() 
+        task = threading.Thread(target=self.run_algorithm, args=(selected_algorithm,))
+        task.start()
+
+    def run_algorithm(self, selected_algorithm):
+        if selected_algorithm == 'DFS':
+            self.actions, steps, weight, node, time, memory = dfs(self.file_name)
+        elif selected_algorithm == 'UCS':
+            self.actions, steps, weight, node, time, memory = ucs(self.file_name)
+        elif selected_algorithm == 'A*':
+            self.actions, steps, weight, node, time, memory = a_star(self.file_name)
+        self.root.after(0, self.finish_loading, steps, weight, node, time, memory)
+
+    def finish_loading(self, steps, weight, node, time, memory):
+        self.loading = False
+        self.dots = 0
+        self.display_info(steps, weight, node, time, memory)
+        self.restart()
+        self.loading_label.config(text="Status: Done!")
+
+    def run_loading_animation(self):
+        if self.loading:
+            self.loading_label.config(text="Status: Loading" + "." * self.dots)
+            self.dots = (self.dots + 1) % 4  
+            self.root.after(500, self.run_loading_animation)
 
     def quit(self):
         exit()
@@ -179,29 +227,13 @@ class App:
         self.running = False
         self.player_pos = player_pos 
         self.animation_state = 0
+        self.loading_label.config(text="Status: ")
 
     def clear_map(self):
-        self.canvas.create_rectangle(0, 0,
-                                    self.W * sz,
-                                    self.H * sz, 
-                                    fill='gray',
-                                    outline='gray')
-        self.canvas.create_line(768, 0, 768, 640)
-
-    def on_algorithm_selected(self, event):
-        selected_algorithm = self.algorithm_combobox.get()
-        if self.file_name is None: return
-        f = open(self.file_name.replace('In', 'Out')).read().split('\n')
-        # print(self.file_name.replace('In', 'Out'), f)
-        for i in range(0, 9, 3):
-            # print(f[i])
-            if f[i] == selected_algorithm:
-                steps, weight, node, time, memory = f[i + 1].split(',')
-                self.actions = f[i + 2]
-                self.display_info(steps.strip(), weight.strip(), node.strip(), time.strip(), memory.strip())
-        # self.actions, steps, weight, node, time, memory = dfs(self.file_name)
-
-        self.restart()
+        for i in range(self.H):
+            for j in range(self.W):
+                self.drawCell((i, j))
+        # self.canvas.create_line(768, 0, 768, 640)
 
     def start(self):
         if not self.running:
@@ -209,11 +241,11 @@ class App:
             self.animate() 
         
     def display_info(self, steps, weight, node, time, memory):
-        self.info_label.config(text = steps + '\n\n' + 
-                                       weight + '\n\n' + 
-                                       node + '\n\n' + 
-                                       time + '\n\n' + 
-                                       memory)
+        self.info_label.config(text = f'Steps: {steps}\n \
+                                       Weight: {weight}\n \
+                                       Node: {node}\n \
+                                       Time (ms): {time:.2f}\n \
+                                       Memory (MB): {memory / 1e6:.2f}')
         # self.weight_label.config(text = weight)
         # self.node_label.config(text = node)
         # self.time_label.config(text = time)
@@ -221,21 +253,19 @@ class App:
 
     def stop(self):
         self.running = False
+        self.loading_label.config(text="Status: Stop")
 
     def animate(self):
         if self.running:
+            self.loading_label.config(text="Status: Running")
             if self.animation_state < len(self.actions):
-                # ok = False
-                # for i in self.switches_pos:
-                #     if self.player_pos == [i[0], i[1]]:
-                #         ok = True
                 self.drawCell(self.player_pos)
-                # if ok: self.drawCell(self.player_pos, self.goal_image)
                 self.player_pos = self.move(self.player_pos, actionsMap.find(self.actions[self.animation_state]))
                 self.drawCell(self.player_pos, self.player_image)
                 self.animation_state += 1
                 self.root.after(self.speed, self.animate)
             else:
+                self.loading_label.config(text="Status: Done")
                 self.running = False
 
     def drawCell(self, coordinate, image = None):
