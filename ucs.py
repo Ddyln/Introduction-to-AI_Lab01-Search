@@ -52,6 +52,7 @@ def readMap(matrix, file_name):
             elif matrix[i][j] == '+': # Player + Switch
                 matrix[i][j] = 6
                 player_pos = (i, j)
+                switches_pos += ((i, j), )
     return player_pos, stones_info, switches_pos, walls_pos
 
 def typeOfAction(direction, player_pos, stones_info, switches_pos, walls_pos):
@@ -159,6 +160,8 @@ def ucs(file_name = 'input.txt'):
                 new_stones_infor += ((x + dx[i], y + dy[i], pushed_stone_weight), ) # Add new stone to information
             
             # If the state has already been explored, skip it
+            # new_stones_infor = tuple(sorted(new_stones_infor, key = lambda x: (x[0], x[1])))
+            
             if ((x, y), new_stones_infor) in explored:
                 continue
 
@@ -185,9 +188,10 @@ def ucs(file_name = 'input.txt'):
 
     return actions, steps, stones_weight, node, time_taken, memory_consumed
 
-file_name = 'input-10.txt'
-actions, steps, weight, node, time_taken, memory_consumed = ucs(file_name)
-f = open(file_name.replace('in', 'out'), 'w')
-f.write('UCS\n')
-sep = ', '
-f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f} ms{sep}Memory (MB): {memory_consumed / 1e6:.2f}{'\n'}{actions}")
+if __name__ == '__main__':
+    file_name = 'input-01.txt'
+    actions, steps, weight, node, time_taken, memory_consumed = ucs(file_name)
+    f = open(file_name.replace('in', 'out'), 'w')
+    f.write('UCS\n')
+    sep = '\n'
+    f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f}{sep}Memory (MB): {memory_consumed / 1e6:.2f}{sep}{actions}")
