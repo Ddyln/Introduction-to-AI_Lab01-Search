@@ -18,7 +18,7 @@ def readMap(matrix, file_name):
     h = len(inp)
     matrix = [i for i in inp]
     matrix = [','.join(i).split(',') for i in matrix]
-    player_pos = []
+    player_pos = ()
     stones_pos = ()
     switches_pos = ()
     walls_pos = ()
@@ -35,7 +35,7 @@ def readMap(matrix, file_name):
                 cnt += 1
             elif matrix[i][j] == '@': # ares
                 matrix[i][j] = 3
-                player_pos = [i, j]
+                player_pos = (i, j)
             elif matrix[i][j] == '.': # switches
                 matrix[i][j] = 4
                 switches_pos += ((i, j), )
@@ -46,7 +46,7 @@ def readMap(matrix, file_name):
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '+': # ares + switches
                 matrix[i][j] = 6
-                player_pos = [i, j]
+                player_pos = (i, j)
                 switches_pos += ((i, j), )
     return w, h, player_pos, stones_pos, switches_pos, walls_pos
 
@@ -76,13 +76,16 @@ class App:
         self.file_name = None
         self.W = 0
         self.H = 0
+        self.running = False
+        self.animation_state = 0
 
         self.button = tk.Button(
             root, 
             text="Load", 
             command=self.load,
             width=8,
-            height=1
+            height=1,
+            padx=5, pady=5
         )
         self.button.place(x = sz * 13.1, y = sz * 2.35)
         
@@ -91,7 +94,8 @@ class App:
             text="Start", 
             command=self.start,
             width=8,
-            height=2
+            height=2,
+            padx=5, pady=5
         )
         self.button.place(x = sz * 12.25, y = sz * 7.25)
         
@@ -100,7 +104,8 @@ class App:
             text="Stop", 
             command=self.stop,
             width=8,
-            height=2
+            height=2, 
+            padx=5, pady=5
         )
         self.button.place(x = sz * 13.75, y = sz * 7.25)
 
@@ -109,7 +114,8 @@ class App:
             text="Restart", 
             command=self.restart,
             width=8,
-            height=2
+            height=2,
+            padx=5, pady=5
         )
         self.button.place(x = sz * 12.25, y = sz * 8.5)
         
@@ -118,39 +124,42 @@ class App:
             text="Quit", 
             command=self.quit,
             width=8,
-            height=2
+            height=2,
+            padx=5, pady=5
         )
         self.button.place(x = sz * 13.75, y = sz * 8.5)
 
         self.algorithm_label = tk.Label(root, 
             text="Select Algorithm",
-            font=("Arial bold", 13),
-            background='gray'
+            font=("Arial", 13, "bold"),
+            background='gray',
+            # width=15,
+            # padx=5, pady=5
         )
         self.algorithm_label.place(x=sz * 12.5, y=sz * 0.25)
         self.algorithm_combobox = ttk.Combobox(root, 
             values=["DFS", "UCS", "A*"], 
             state='readonly',
             width=10,
-            font=("Arial", 12)
+            font=("Arial", 12),
+            # padx=5, pady=5
         )
         self.actions = ''
         self.algorithm_combobox.set("select")  # Set default value
         self.algorithm_combobox.place(x=sz * 12 + sz * 3 // 4, y=sz * 0.75)
-        # self.algorithm_combobox.bind("<<ComboboxSelected>>", self.on_algorithm_selected)
-        # self.on_algorithm_selected(tk.Event())
-
         self.input_label = tk.Label(root, 
             text="Select Input",
-            font=("Arial bold", 13),
-            background='gray'
+            font=("Arial", 13, "bold"),
+            background='gray',
+            padx=5, pady=5
         )
         self.input_label.place(x=sz * 12.75, y=sz * 1.25)
         self.input_combobox = ttk.Combobox(root, 
-            values=["Input-01", "Input-02"], 
+            values=["input-01", "input-02"], 
             state='readonly',
             width=10,
-            font=("Arial", 12)
+            font=("Arial", 12),
+            # padx=5, pady=5
         )
         self.input_combobox.set("select")  # Set default value
         self.input_combobox.place(x=sz * 12 + sz * 3 // 4, y=sz * 1.75)
@@ -168,7 +177,7 @@ class App:
         self.loading_label = tk.Label(
             root,
             text = 'Status: ',
-            font=("Arial bold", 13),
+            font=("Arial", 13, "bold"),
             background='gray',
         )
         self.loading_label.place(x = 12.5 * sz, y = 3 * sz)
@@ -232,7 +241,6 @@ class App:
         for i in range(self.H):
             for j in range(self.W):
                 self.drawCell((i, j))
-        # self.canvas.create_line(768, 0, 768, 640)
 
     def start(self):
         if not self.running:
@@ -245,10 +253,6 @@ class App:
                                        Node: {node}\n \
                                        Time (ms): {time:.2f}\n \
                                        Memory (MB): {memory / 1e6:.2f}')
-        # self.weight_label.config(text = weight)
-        # self.node_label.config(text = node)
-        # self.time_label.config(text = time)
-        # self.memory_label.config(text = memory)
 
     def stop(self):
         self.running = False
