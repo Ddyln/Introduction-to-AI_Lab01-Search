@@ -1,7 +1,7 @@
 from PriorityQueue import PriorityQueue
 import time as TIME
 from collections import deque
-
+import psutil
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 # up -> right -> down -> left
@@ -81,7 +81,9 @@ def bfs(file_name):
     time: thời gian chạy thuật toán (ms)
     memory: bộ nhớ mà thuật toán đã dùng (MB)
     """
+    process = psutil.Process()
     actions, steps, weight, node, time, memory = '', 0, 0, 0, 0, 0
+    memory = process.memory_info().rss
     matrix = [[]]
 
     # Read the map and initialize positions
@@ -90,15 +92,16 @@ def bfs(file_name):
 
     # Use a standard queue for BFS instead of PriorityQueue
     frontier = deque()
-    frontier.append((player_pos, steps, stones_pos, actions))
+    frontier.append((player_pos, steps, stones_pos,weight, actions))
 
     # Keep track of explored states
     explored_set = set()
     time = TIME.time()
+    max_memory = memory
 
     while frontier:
         # Dequeue the first element (FIFO)
-        player_pos, steps, stones_pos, actions = frontier.popleft()
+        player_pos, steps, stones_pos,weight , actions = frontier.popleft()
 
         if (tuple(player_pos), stones_pos) in explored_set:
             continue
@@ -108,6 +111,8 @@ def bfs(file_name):
         # Check if the goal (all switches activated) is reached
         if checkAllSwitch(stones_pos, switches_pos):
             time = TIME.time() - time
+            max_memory = max(max_memory, process.memory_info().rss)
+            memory = max_memory - memory
             break
 
         # Expanding the current node
@@ -120,12 +125,12 @@ def bfs(file_name):
                 continue
 
             new_stones_pos = stones_pos
-
+            new_weight = weight
             if t == 4:  # Stone is pushed
                 pushed_stones_weight = [i for i in new_stones_pos if (i[0], i[1]) == (x, y)][0][-1]
                 new_stones_pos = tuple(i for i in new_stones_pos if (i[0], i[1]) != (x, y))
                 new_stones_pos += ((x + dx[i], y + dy[i], pushed_stones_weight),)
-
+                new_weight += pushed_stones_weight
             # Sort the stones' positions for consistency in explored states
             new_stones_pos = tuple(sorted(new_stones_pos, key=lambda x: (x[0], x[1])))
 
@@ -134,11 +139,12 @@ def bfs(file_name):
                 continue
 
             node += 1  # Count the number of nodes created
-            frontier.append(([x, y], steps + 1, new_stones_pos, actions + actionsMap[i + t]))
+            frontier.append(([x, y], steps + 1, new_stones_pos, new_weight, actions + actionsMap[i + t]))
 
     return actions, steps, weight, node, time, memory
 
 file_name = 'input-01.txt'
 actions, steps, weight, node, time, memory = bfs(file_name)
+print(actions)
 f = open(file_name.replace('inp', 'out'), 'w')
 f.write(f"Nodes: {node}\nTime: {time:.3f} seconds\nActions: {actions}")
