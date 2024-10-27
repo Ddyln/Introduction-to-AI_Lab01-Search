@@ -50,10 +50,7 @@ def readMap(matrix, file_name):
                 switches_pos += ((i, j), )
     return w, h, player_pos, stones_pos, switches_pos, walls_pos
 
-file_name = 'input-01.txt'
-matrix = [[]]
-player_pos, stones_pos, switches_pos, walls_pos = readMap(matrix, file_name)
-actions = 'uulDldRRRRRRRRlllluulDrdLLL'
+actionsMap = 'urdlURDL'
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 
