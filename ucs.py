@@ -115,6 +115,7 @@ def ucs(file_name = 'input.txt'):
 
     while not frontier.is_empty():
         topQueue = frontier.pop()    # Get the state with the lowest cost
+     
         player_pos = topQueue[0]
         stones_info = topQueue[1]
         stones_weight = topQueue[2]
@@ -122,7 +123,9 @@ def ucs(file_name = 'input.txt'):
         oldcost = topQueue[4]
 
         # If the state has already been explored, skip it
-        if (player_pos, stones_info) in explored:
+        # if (player_pos, stones_info) in explored:
+        #     continue
+        if (player_pos, tuple(sorted((x, y) for x, y, _ in stones_info))) in explored:
             continue
         
         # If all switches have been activated, stop the algorithm
@@ -144,7 +147,7 @@ def ucs(file_name = 'input.txt'):
             
             pushed_stone_weight = 0
             new_stones_infor = stones_info
-            move_cost = 0.01   # Normal move cost
+            move_cost = 1   # Normal move cost
 
             # If a stone is pushed
             if status == 4:
@@ -155,12 +158,12 @@ def ucs(file_name = 'input.txt'):
                         pushed_stone_weight = stone[2]  # Record the weight of the pushed stone ((0, 1): position; 2: weight)
                     else:
                         new_stones_infor += (stone, )   # Add non-pushed stones
-                move_cost += pushed_stone_weight        # Update move cost
+                move_cost = pushed_stone_weight        # Update move cost
 
                 new_stones_infor += ((x + dx[i], y + dy[i], pushed_stone_weight), ) # Add new stone to information
             
             # If the state has already been explored, skip it
-            # new_stones_infor = tuple(sorted(new_stones_infor, key = lambda x: (x[0], x[1])))
+            new_stones_infor = tuple(sorted(new_stones_infor, key = lambda x: (x[0], x[1])))
             
             if ((x, y), new_stones_infor) in explored:
                 continue
@@ -172,8 +175,8 @@ def ucs(file_name = 'input.txt'):
                         new_stones_infor, 
                         stones_weight + pushed_stone_weight, 
                         actions + actionsMap[i + status],
-                        oldcost + stones_weight + move_cost), 
-                        oldcost + stones_weight + move_cost)
+                        oldcost + move_cost), 
+                        oldcost + move_cost)
             
     # Stop measuring time
     end_time = time.time()
@@ -195,3 +198,4 @@ if __name__ == '__main__':
     f.write('UCS\n')
     sep = '\n'
     f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time_taken * 1000:.2f}{sep}Memory (MB): {memory_consumed / 1e6:.2f}{sep}{actions}")
+    f.close()
