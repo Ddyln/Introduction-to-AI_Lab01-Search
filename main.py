@@ -26,11 +26,11 @@ def runAll():
             sep = ', '
             f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}\n{actions}\n")
 
-            actions, steps, weight, node, time, memory = dfs(file_name)
-            f = open(file_name.replace('in', 'out'), 'a')
-            f.write('DFS\n')
-            sep = ', '
-            f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}\n{actions}\n")
+            # actions, steps, weight, node, time, memory = dfs(file_name)
+            # f = open(file_name.replace('in', 'out'), 'a')
+            # f.write('DFS\n')
+            # sep = ', '
+            # f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}\n{actions}\n")
                 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
