@@ -122,13 +122,13 @@ def ucs(file_name = 'input.txt'):
         oldcost = topQueue[4]
 
         # If the state has already been explored, skip it
+        stones_info = tuple(sorted(stones_info, key = lambda x: (x[0], x[1])))
         if (player_pos, stones_info) in explored:
             continue
         
         # If all switches have been activated, stop the algorithm
         if checkAllSwitch(stones_info, switches_pos):
             break
-        
         explored.add((player_pos, stones_info))  # Mark the state as explored
 
         # Check all possible actions
@@ -155,12 +155,12 @@ def ucs(file_name = 'input.txt'):
                         pushed_stone_weight = stone[2]  # Record the weight of the pushed stone ((0, 1): position; 2: weight)
                     else:
                         new_stones_infor += (stone, )   # Add non-pushed stones
-                move_cost += pushed_stone_weight        # Update move cost
+                move_cost = pushed_stone_weight        # Update move cost
 
                 new_stones_infor += ((x + dx[i], y + dy[i], pushed_stone_weight), ) # Add new stone to information
             
             # If the state has already been explored, skip it
-            # new_stones_infor = tuple(sorted(new_stones_infor, key = lambda x: (x[0], x[1])))
+            new_stones_infor = tuple(sorted(new_stones_infor, key = lambda x: (x[0], x[1])))
             
             if ((x, y), new_stones_infor) in explored:
                 continue
@@ -172,8 +172,8 @@ def ucs(file_name = 'input.txt'):
                         new_stones_infor, 
                         stones_weight + pushed_stone_weight, 
                         actions + actionsMap[i + status],
-                        oldcost + stones_weight + move_cost), 
-                        oldcost + stones_weight + move_cost)
+                        oldcost + move_cost), 
+                        oldcost + move_cost)
             
     # Stop measuring time
     end_time = time.time()

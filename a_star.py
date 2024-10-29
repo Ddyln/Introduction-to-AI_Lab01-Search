@@ -106,6 +106,7 @@ def a_star(file_name = 'input-01.txt'):
         actions = topQueue[2]
         weight = topQueue[3]
         g = topQueue[4]
+        stones_pos = tuple(sorted(stones_pos, key = lambda x: (x[0], x[1])))
         if (player_pos, stones_pos) in explored_set:
             continue
         # print(actions, player_pos, stones_pos)
@@ -129,7 +130,8 @@ def a_star(file_name = 'input-01.txt'):
                 continue
             new_stones_pos = stones_pos
             new_weight = weight
-            pushed_stones_weight = 0.01
+            pushed_stones_weight = 1
+            new_g = g
             if t == 4:
                 pushed_stones_weight = [i for i in new_stones_pos if (i[0], i[1]) == (x, y)][0][-1]
                 new_stones_pos = tuple(i for i in new_stones_pos if (i[0], i[1]) != (x, y))
@@ -138,14 +140,14 @@ def a_star(file_name = 'input-01.txt'):
             new_stones_pos = tuple(sorted(new_stones_pos, key = lambda x: (x[0], x[1])))
             if ((x, y), new_stones_pos) in explored_set:
                 continue
+            new_g += pushed_stones_weight
             node += 1
-            g += pushed_stones_weight
             frontier.push(((x, y), 
                             new_stones_pos, 
                             actions + actionsMap[i + t],
                             new_weight,
-                            g), 
-                            g + heuristicCost(stones_pos, switches_pos))
+                            new_g), 
+                            new_g + heuristicCost(new_stones_pos, switches_pos))
     return actions, steps, weight, node, time, memory
 
 if __name__ == '__main__':

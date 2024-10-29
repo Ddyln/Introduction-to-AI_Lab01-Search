@@ -72,7 +72,7 @@ class App:
         self.goal_image = tk.PhotoImage(file="./Assets/goal.png")
         self.block_image = tk.PhotoImage(file="./Assets/block.png")
         self.switches_pos = ()
-        self.speed = 500
+        self.speed = 200
         self.file_name = None
         self.W = 0
         self.H = 0
@@ -147,7 +147,7 @@ class App:
         )
         self.input_label.place(x=sz * 12.75, y=sz * 1.25)
         self.input_combobox = ttk.Combobox(root, 
-            values=["Input-01", "Input-02"], 
+            values=["Input-01", "Input-02", "Input-03", "Input-04", "Input-06"], 
             state='readonly',
             width=10,
             font=("Arial", 12)
