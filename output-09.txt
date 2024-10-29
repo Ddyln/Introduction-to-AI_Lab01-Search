@@ -1,0 +1,6 @@
+A*
+Steps: 22, Weight: 45, Nodes: 776, Time (ms): 7.42, Memory (MB): 0.00
+dLLUlDrrruLuLDrdLulluR
+UCS
+Steps: 22, Weight: 45, Nodes: 7357, Time (ms): 58.73, Memory (MB): 0.00
+dLLUlDrrruLuLDrdLulluR
