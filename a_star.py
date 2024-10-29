@@ -139,19 +139,20 @@ def a_star(file_name = 'input-01.txt'):
             if ((x, y), new_stones_pos) in explored_set:
                 continue
             node += 1
-            g += pushed_stones_weight
+            new_g = g + pushed_stones_weight
             frontier.push(((x, y), 
                             new_stones_pos, 
                             actions + actionsMap[i + t],
                             new_weight,
-                            g), 
-                            g + heuristicCost(stones_pos, switches_pos))
+                            new_g), 
+                            new_g + heuristicCost(new_stones_pos, switches_pos))
     return actions, steps, weight, node, time, memory
 
 if __name__ == '__main__':
-    file_name = 'input-01.txt'
+    file_name = 'input-05.txt'
     actions, steps, weight, node, time, memory = a_star(file_name)
     f = open(file_name.replace('in', 'out'), 'w')
     f.write('A*\n')
     sep = ', '
     f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}\n{actions}")
+    f.close()
