@@ -1,3 +1,7 @@
-A*
-Steps: 24, Weight: 405, Nodes: 6836, Time (ms): 153.28, Memory (MB): 1.76
+UCS
+Steps: 24
+Weight: 405
+Nodes: 59567
+Time (ms): 668.66
+Memory (MB): 9.95
 lluRurrDrdLLLuRRRRRRRurD
