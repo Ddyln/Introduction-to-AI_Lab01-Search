@@ -16,7 +16,7 @@ def readMap(matrix, file_name):
     h = len(inp)
     matrix = [i for i in inp]
     matrix = [','.join(i).split(',') for i in matrix]
-    player_pos = []
+    player_pos = ()
     stones_pos = ()
     switches_pos = ()
     walls_pos = ()
@@ -33,7 +33,7 @@ def readMap(matrix, file_name):
                 cnt += 1
             elif matrix[i][j] == '@': # ares
                 matrix[i][j] = 3
-                player_pos = [i, j]
+                player_pos = (i, j)
             elif matrix[i][j] == '.': # switches
                 matrix[i][j] = 4
                 switches_pos += ((i, j), )
@@ -44,10 +44,12 @@ def readMap(matrix, file_name):
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '+': # ares + switches
                 matrix[i][j] = 6
-                player_pos = [i, j]
+                player_pos = (i, j)
+                switches_pos += ((i, j), )
     return player_pos, stones_pos, switches_pos, walls_pos
 
 def heuristicCost(stones_pos, switches_pos):
+    # return 0
     h = 1e18
     temp = permutations(switches_pos)
     for a in temp:
@@ -59,12 +61,12 @@ def heuristicCost(stones_pos, switches_pos):
 
 def typeOfAction(direction, player_pos, stones_pos, switches_pos, walls_pos):
     # blocked by wall
-    if tuple(player_pos) in walls_pos:
+    if player_pos in walls_pos:
         return 1 
     
     # check if any stone is pushed
     for i in stones_pos:
-        if tuple(player_pos) == (i[0], i[1]):
+        if player_pos == (i[0], i[1]):
             pushed_stones = (i[0] + dx[direction], i[1] + dy[direction])
             if pushed_stones in walls_pos: return 1
             return 4 if pushed_stones not in ((j[0], j[1]) for j in stones_pos) else 1
@@ -92,61 +94,64 @@ def a_star(file_name = 'input-01.txt'):
     matrix = [[]]
     player_pos, stones_pos, switches_pos, walls_pos = readMap(matrix, file_name)
     frontier = PriorityQueue(0)
-    frontier.push((player_pos, stones_pos, actions, weight), 0)    
+    frontier.push((player_pos, stones_pos, actions, weight, 0), 0)    
     explored_set = set()
     time = TIME.time()
     max_memory = memory
+    steps = 0
     while frontier.is_empty() == False:
-        # max_memory = max(max_memory, process.memory_info().rss)
         topQueue = frontier.pop()
         player_pos = topQueue[0]
         stones_pos = topQueue[1]
         actions = topQueue[2]
         weight = topQueue[3]
-        if (tuple(player_pos), stones_pos) in explored_set:
+        g = topQueue[4]
+        if (player_pos, stones_pos) in explored_set:
             continue
         # print(actions, player_pos, stones_pos)
-        # g = len([x for x in actions if x == x.lower()])
-        g = len(actions)
-        explored_set.add((tuple(player_pos), stones_pos))
+        
+        explored_set.add((player_pos, stones_pos))
 
         # Check goal reaching
         if checkAllSwitch(stones_pos, switches_pos):
             time = TIME.time() - time
             max_memory = max(max_memory, process.memory_info().rss)
             memory = max_memory - memory
+            steps = len(actions)
             break
-
+        
         # Expanding
         for i in range(4):
             x = dx[i] + player_pos[0]
             y = dy[i] + player_pos[1]
-            t = typeOfAction(i, [x, y], stones_pos, switches_pos, walls_pos)
-            # max_memory = max(max_memory, process.memory_info().rss)
+            t = typeOfAction(i, (x, y), stones_pos, switches_pos, walls_pos)
             if t == 1:
                 continue
             new_stones_pos = stones_pos
             new_weight = weight
+            pushed_stones_weight = 0.01
             if t == 4:
                 pushed_stones_weight = [i for i in new_stones_pos if (i[0], i[1]) == (x, y)][0][-1]
                 new_stones_pos = tuple(i for i in new_stones_pos if (i[0], i[1]) != (x, y))
                 new_stones_pos += ((x + dx[i], y + dy[i], pushed_stones_weight), )
                 new_weight += pushed_stones_weight
             new_stones_pos = tuple(sorted(new_stones_pos, key = lambda x: (x[0], x[1])))
-            # max_memory = max(max_memory, process.memory_info().rss)
-            if ((x, y), tuple(new_stones_pos)) in explored_set:
+            if ((x, y), new_stones_pos) in explored_set:
                 continue
             node += 1
-            frontier.push(([x, y], 
+            g += pushed_stones_weight
+            frontier.push(((x, y), 
                             new_stones_pos, 
                             actions + actionsMap[i + t],
-                            new_weight), 
-                            g + 1 + heuristicCost(stones_pos, switches_pos))
-    return actions, weight, node, time, memory
+                            new_weight,
+                            g), 
+                            g + heuristicCost(stones_pos, switches_pos))
+    return actions, steps, weight, node, time, memory
 
-file_name = 'input-01.txt'
-actions, weight, node, time, memory = a_star(file_name)
-f = open(file_name.replace('inp', 'out'), 'w')
-f.write('A*\n')
-sep = '\n'
-f.write(f"Steps: {len(actions)}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f} ms{sep}Memory (MB): {memory / 1e6:.2f}{sep}{actions}")
+if __name__ == '__main__':
+    file_name = 'input-01.txt'
+    actions, steps, weight, node, time, memory = a_star(file_name)
+    f = open(file_name.replace('in', 'out'), 'w')
+    f.write('A*\n')
+    sep = ', '
+    f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}\n{actions}")
