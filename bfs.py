@@ -4,11 +4,11 @@ from collections import deque
 import psutil
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
-# up -> right -> down -> left
 
 actionsMap = 'urdlURDL'
 
 def readMap(matrix, file_name):
+
     inp = open(file_name).read().split('\n')
     w = list(map(int, inp[0].split()))
     stones_cost = list(map(int, inp[0].split()))
@@ -89,7 +89,6 @@ def bfs(file_name):
     # Read the map and initialize positions
     player_pos, stones_pos, switches_pos, walls_pos = readMap(matrix, file_name)
 
-
     # Use a standard queue for BFS instead of PriorityQueue
     frontier = deque()
     frontier.append((player_pos, steps, stones_pos,weight, actions))
@@ -100,12 +99,13 @@ def bfs(file_name):
     max_memory = memory
 
     while frontier:
-        # Dequeue the first element (FIFO)
+        # Queue the first element (FIFO)
         player_pos, steps, stones_pos,weight , actions = frontier.popleft()
 
         if (tuple(player_pos), stones_pos) in explored_set:
             continue
 
+       # position visited
         explored_set.add((tuple(player_pos), stones_pos))
 
         # Check if the goal (all switches activated) is reached
@@ -129,8 +129,13 @@ def bfs(file_name):
             if t == 4:  # Stone is pushed
                 pushed_stones_weight = [i for i in new_stones_pos if (i[0], i[1]) == (x, y)][0][-1]
                 new_stones_pos = tuple(i for i in new_stones_pos if (i[0], i[1]) != (x, y))
+
+                # add new stones position
                 new_stones_pos += ((x + dx[i], y + dy[i], pushed_stones_weight),)
+
+                # add weight
                 new_weight += pushed_stones_weight
+
             # Sort the stones' positions for consistency in explored states
             new_stones_pos = tuple(sorted(new_stones_pos, key=lambda x: (x[0], x[1])))
 
@@ -143,8 +148,11 @@ def bfs(file_name):
 
     return actions, steps, weight, node, time, memory
 
-file_name = 'input-01.txt'
-actions, steps, weight, node, time, memory = bfs(file_name)
-print(actions)
-f = open(file_name.replace('inp', 'out'), 'w')
-f.write(f"Nodes: {node}\nTime: {time:.3f} seconds\nActions: {actions}")
+if __name__ == '__main__':
+    file_name = 'input-03.txt'
+    actions, steps, weight, node, time, memory = bfs(file_name)
+    print(actions)
+    f = open(file_name.replace('in', 'out'), 'w')
+    f.write('BFS\n')
+    sep = '\n'
+    f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}{sep}{actions}")
