@@ -42,6 +42,13 @@ def readMap(matrix, file_name):
                 switches_pos.append((i, j))
             elif matrix[i][j] == '#': #-> wall
                 walls_pos.append((i, j))
+            elif matrix[i][j] == '*': #-> switch and stone
+                stones_pos.append((i, j, int(weights[count])))
+                count += 1
+                switches_pos.append((i, j))
+            elif matrix[i][j] == '+': #-> player and switch
+                switches_pos.append((i, j))
+                player_pos = (i, j)
 
     return player_pos, stones_pos, switches_pos, walls_pos
 
@@ -160,9 +167,10 @@ def dfs(file_name):
         steps = len(actions)
     return actions, steps , weight, node, time, memory
 
-file_name = 'input1.txt'
-actions, steps, weight, node, time, memory = dfs(file_name)
-f = open(file_name.replace('in', 'out'), 'w')
-f.write('DFS\n')
-sep = '\n'
-f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f} ms{sep}Memory (MB): {memory / 1e6:.2f}{sep}{actions}")
+if __name__ == '__main__':
+    file_name = 'input-01.txt'
+    actions, steps, weight, node, time, memory = dfs(file_name)
+    f = open(file_name.replace('in', 'out'), 'w')
+    f.write('DFS\n')
+    sep = '\n'
+    f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}{sep}{actions}")
