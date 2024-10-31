@@ -168,7 +168,7 @@ def dfs(file_name):
     return actions, steps , weight, node, time, memory
 
 if __name__ == '__main__':
-    file_name = 'input-01.txt'
+    file_name = 'input-02.txt'
     actions, steps, weight, node, time, memory = dfs(file_name)
     f = open(file_name.replace('in', 'out'), 'w')
     f.write('DFS\n')
