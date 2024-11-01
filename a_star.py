@@ -23,27 +23,20 @@ def readMap(matrix, file_name):
     cnt = 0
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
-            if matrix[i][j] == ' ': matrix[i][j] = 0 # space
-            elif matrix[i][j] == '#': # walls
-                matrix[i][j] = 1
+            if matrix[i][j] == '#': # walls
                 walls_pos += ((i, j), )
             elif matrix[i][j] == '$': # stones
-                matrix[i][j] = 2
                 stones_pos += ((i, j, stones_cost[cnt]), )
                 cnt += 1
             elif matrix[i][j] == '@': # ares
-                matrix[i][j] = 3
                 player_pos = (i, j)
             elif matrix[i][j] == '.': # switches
-                matrix[i][j] = 4
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '*': # stones + switches
-                matrix[i][j] = 5
                 stones_pos += ((i, j, stones_cost[cnt]), )
                 cnt += 1
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '+': # ares + switches
-                matrix[i][j] = 6
                 player_pos = (i, j)
                 switches_pos += ((i, j), )
     return player_pos, stones_pos, switches_pos, walls_pos

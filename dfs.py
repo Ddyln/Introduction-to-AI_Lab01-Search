@@ -42,7 +42,13 @@ def readMap(matrix, file_name):
                 switches_pos.append((i, j))
             elif matrix[i][j] == '#': #-> wall
                 walls_pos.append((i, j))
-
+            elif matrix[i][j] == '*': # stones + switches
+                stones_pos.append((i, j, int(weights[count])))
+                count += 1
+                switches_pos.append((i, j))
+            elif matrix[i][j] == '+': # ares + switches
+                player_pos = (i, j)
+                switches_pos += ((i, j), )
     return player_pos, stones_pos, switches_pos, walls_pos
 
 # Check switch have filled by stone
@@ -107,23 +113,26 @@ def dfs(file_name):
 
     time = TIME.time()
     max_memory = memory
-
+    cnt = 0
     while len(frontier) != 0:
         top = frontier.pop()
         player = top[0]
         stones = top[1]
         weight = top[2]
         actions = top[3]
-
         # Check goal reaching
         if checkAllSwitch(stones, switches):
             time = TIME.time() - time
             max_memory = max(max_memory, process.memory_info().rss)
             memory = max_memory - memory
             break
-
-
+        cnt += 1
+        # if cnt > 5:
+        #     break
+        # print(f"1.{(player, stones)}")
+        # print(f"2.{visited}")
         if (player, stones) in visited:
+            # print('asd')
             continue
 
         visited.append((player, stones))
@@ -161,7 +170,7 @@ def dfs(file_name):
     return actions, steps , weight, node, time, memory
 
 if __name__ == '__main__':
-    file_name = 'input-01.txt'
+    file_name = 'input-03.txt'
     actions, steps, weight, node, time, memory = dfs(file_name)
     f = open(file_name.replace('in', 'out'), 'w')
     f.write('DFS\n')
