@@ -5,7 +5,7 @@ from tkinter import ttk
 from a_star import a_star
 from ucs import ucs
 from dfs import dfs
-
+from bfs import bfs
 sz = 64
 start_x, start_y = 0, 0
 
@@ -138,7 +138,7 @@ class App:
         )
         self.algorithm_label.place(x=sz * 12.5, y=sz * 0.25)
         self.algorithm_combobox = ttk.Combobox(root, 
-            values=["DFS", "UCS", "A*"], 
+            values=["DFS","BFS", "UCS", "A*"],
             state='readonly',
             width=10,
             font=("Arial", 12),
@@ -155,7 +155,7 @@ class App:
         )
         self.input_label.place(x=sz * 12.75, y=sz * 1.25)
         self.input_combobox = ttk.Combobox(root, 
-            values=["input-01", "input-02", "input-03", "input-04", "input-06"], 
+            values=["input-01", "input-02", "input-03", "input-04", "input-06"],
             state='readonly',
             width=10,
             font=("Arial", 12),
@@ -195,6 +195,8 @@ class App:
     def run_algorithm(self, selected_algorithm):
         if selected_algorithm == 'DFS':
             self.actions, steps, weight, node, time, memory = dfs(self.file_name)
+        elif selected_algorithm == 'BFS':
+            self.actions, steps, weight, node, time, memory = bfs(self.file_name)
         elif selected_algorithm == 'UCS':
             self.actions, steps, weight, node, time, memory = ucs(self.file_name)
         elif selected_algorithm == 'A*':

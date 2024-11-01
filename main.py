@@ -2,6 +2,7 @@ from PriorityQueue import PriorityQueue
 from a_star import a_star
 from dfs import dfs
 from ucs import ucs
+from bfs import bfs
 import visualize as vsl
 import sys
 import os
@@ -10,7 +11,7 @@ def visualize():
     vsl.run()
 
 def runAll():
-    for i in range(1, 3):
+    for i in range(1, 11):
         ch = ('0' if i < 10 else '') + str(i)
         file_name = 'input-' + ch + '.txt'
         if os.path.isfile(file_name):
@@ -31,6 +32,12 @@ def runAll():
             f.write('DFS\n')
             sep = ', '
             f.write(f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}\n{actions}\n")
+
+            actions, steps, weight, node, time, memory = bfs(file_name)
+            f = open(file_name.replace('in', 'out'), 'a')
+            f.write('BFS\n')
+            sep = ', '
+            f.write( f"Steps: {steps}{sep}Weight: {weight}{sep}Nodes: {node}{sep}Time (ms): {time * 1000:.2f}{sep}Memory (MB): {memory / 1e6:.2f}\n{actions}\n")
                 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
