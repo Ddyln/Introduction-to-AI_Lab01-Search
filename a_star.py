@@ -23,27 +23,20 @@ def readMap(matrix, file_name):
     cnt = 0
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
-            if matrix[i][j] == ' ': matrix[i][j] = 0 # space
-            elif matrix[i][j] == '#': # walls
-                matrix[i][j] = 1
+            if matrix[i][j] == '#': # walls
                 walls_pos += ((i, j), )
             elif matrix[i][j] == '$': # stones
-                matrix[i][j] = 2
                 stones_pos += ((i, j, stones_cost[cnt]), )
                 cnt += 1
             elif matrix[i][j] == '@': # ares
-                matrix[i][j] = 3
                 player_pos = (i, j)
             elif matrix[i][j] == '.': # switches
-                matrix[i][j] = 4
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '*': # stones + switches
-                matrix[i][j] = 5
                 stones_pos += ((i, j, stones_cost[cnt]), )
                 cnt += 1
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '+': # ares + switches
-                matrix[i][j] = 6
                 player_pos = (i, j)
                 switches_pos += ((i, j), )
     return player_pos, stones_pos, switches_pos, walls_pos
@@ -98,7 +91,7 @@ def a_star(file_name = 'input-01.txt'):
     explored_set = set()
     time = TIME.time()
     max_memory = memory
-    steps = 0
+    steps = -1
     while frontier.is_empty() == False:
         topQueue = frontier.pop()
         player_pos = topQueue[0]
@@ -106,6 +99,7 @@ def a_star(file_name = 'input-01.txt'):
         actions = topQueue[2]
         weight = topQueue[3]
         g = topQueue[4]
+        stones_pos = tuple(sorted(stones_pos, key = lambda x: (x[0], x[1])))
         if (player_pos, stones_pos) in explored_set:
             continue
         # print(actions, player_pos, stones_pos)
@@ -129,7 +123,8 @@ def a_star(file_name = 'input-01.txt'):
                 continue
             new_stones_pos = stones_pos
             new_weight = weight
-            pushed_stones_weight = 0.01
+            pushed_stones_weight = 1
+            new_g = g
             if t == 4:
                 pushed_stones_weight = [i for i in new_stones_pos if (i[0], i[1]) == (x, y)][0][-1]
                 new_stones_pos = tuple(i for i in new_stones_pos if (i[0], i[1]) != (x, y))
@@ -138,8 +133,8 @@ def a_star(file_name = 'input-01.txt'):
             new_stones_pos = tuple(sorted(new_stones_pos, key = lambda x: (x[0], x[1])))
             if ((x, y), new_stones_pos) in explored_set:
                 continue
+            new_g += pushed_stones_weight
             node += 1
-            new_g = g + pushed_stones_weight
             frontier.push(((x, y), 
                             new_stones_pos, 
                             actions + actionsMap[i + t],

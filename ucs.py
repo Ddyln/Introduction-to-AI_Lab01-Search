@@ -30,27 +30,20 @@ def readMap(matrix, file_name):
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
             # Classify characters in the matrix
-            if matrix[i][j] == ' ': matrix[i][j] = 0 # space
-            elif matrix[i][j] == '#': # walls
-                matrix[i][j] = 1
+            if matrix[i][j] == '#': # walls
                 walls_pos += ((i, j), )
             elif matrix[i][j] == '$': # stones
-                matrix[i][j] = 2
                 stones_info += ((i, j, stones_cost[cnt]), )
                 cnt += 1
             elif matrix[i][j] == '@': # Player position
-                matrix[i][j] = 3
                 player_pos = (i, j)
             elif matrix[i][j] == '.': # switches
-                matrix[i][j] = 4
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '*': # stones + switches
-                matrix[i][j] = 5
                 stones_info += ((i, j, stones_cost[cnt]), )
                 cnt += 1
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '+': # Player + Switch
-                matrix[i][j] = 6
                 player_pos = (i, j)
                 switches_pos += ((i, j), )
     return player_pos, stones_info, switches_pos, walls_pos
@@ -123,15 +116,13 @@ def ucs(file_name = 'input.txt'):
         oldcost = topQueue[4]
 
         # If the state has already been explored, skip it
-        # if (player_pos, stones_info) in explored:
-        #     continue
-        if (player_pos, tuple(sorted((x, y) for x, y, _ in stones_info))) in explored:
+        stones_info = tuple(sorted(stones_info, key = lambda x: (x[0], x[1])))
+        if (player_pos, stones_info) in explored:
             continue
         
         # If all switches have been activated, stop the algorithm
         if checkAllSwitch(stones_info, switches_pos):
             break
-        
         explored.add((player_pos, stones_info))  # Mark the state as explored
 
         # Check all possible actions
@@ -192,7 +183,7 @@ def ucs(file_name = 'input.txt'):
     return actions, steps, stones_weight, node, time_taken, memory_consumed
 
 if __name__ == '__main__':
-    file_name = 'input-01.txt'
+    file_name = 'input-03.txt'
     actions, steps, weight, node, time_taken, memory_consumed = ucs(file_name)
     f = open(file_name.replace('in', 'out'), 'w')
     f.write('UCS\n')
