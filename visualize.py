@@ -2,6 +2,7 @@ import tkinter as tk
 import time as TIME
 import threading
 from tkinter import ttk
+import sys
 from a_star import a_star
 from ucs import ucs
 from dfs import dfs
@@ -18,7 +19,7 @@ def readMap(matrix, file_name):
     h = len(inp)
     matrix = [i for i in inp]
     matrix = [','.join(i).split(',') for i in matrix]
-    player_pos = []
+    player_pos = ()
     stones_pos = ()
     switches_pos = ()
     walls_pos = ()
@@ -35,7 +36,7 @@ def readMap(matrix, file_name):
                 cnt += 1
             elif matrix[i][j] == '@': # ares
                 matrix[i][j] = 3
-                player_pos = [i, j]
+                player_pos = (i, j)
             elif matrix[i][j] == '.': # switches
                 matrix[i][j] = 4
                 switches_pos += ((i, j), )
@@ -46,7 +47,7 @@ def readMap(matrix, file_name):
                 switches_pos += ((i, j), )
             elif matrix[i][j] == '+': # ares + switches
                 matrix[i][j] = 6
-                player_pos = [i, j]
+                player_pos = (i, j)
                 switches_pos += ((i, j), )
     return w, h, player_pos, stones_pos, switches_pos, walls_pos
 
@@ -55,7 +56,7 @@ dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 
 class App:
-    def __init__(self, root):
+    def __init__(self, root, speed):
         self.root = root
         self.width = 64 * 15
         self.height = 64 * 10
@@ -72,17 +73,22 @@ class App:
         self.goal_image = tk.PhotoImage(file="./Assets/goal.png")
         self.block_image = tk.PhotoImage(file="./Assets/block.png")
         self.switches_pos = ()
-        self.speed = 500
+        self.speed = speed
         self.file_name = None
         self.W = 0
         self.H = 0
+        self.running = False
+        self.animation_state = 0
+        self.current_step = 0
+        self.current_weight = 0
 
         self.button = tk.Button(
             root, 
             text="Load", 
             command=self.load,
             width=8,
-            height=1
+            height=1,
+            padx=5, pady=5
         )
         self.button.place(x = sz * 13.1, y = sz * 2.35)
         
@@ -91,7 +97,8 @@ class App:
             text="Start", 
             command=self.start,
             width=8,
-            height=2
+            height=2,
+            padx=5, pady=5
         )
         self.button.place(x = sz * 12.25, y = sz * 7.25)
         
@@ -100,7 +107,8 @@ class App:
             text="Stop", 
             command=self.stop,
             width=8,
-            height=2
+            height=2, 
+            padx=5, pady=5
         )
         self.button.place(x = sz * 13.75, y = sz * 7.25)
 
@@ -109,7 +117,8 @@ class App:
             text="Restart", 
             command=self.restart,
             width=8,
-            height=2
+            height=2,
+            padx=5, pady=5
         )
         self.button.place(x = sz * 12.25, y = sz * 8.5)
         
@@ -118,39 +127,42 @@ class App:
             text="Quit", 
             command=self.quit,
             width=8,
-            height=2
+            height=2,
+            padx=5, pady=5
         )
         self.button.place(x = sz * 13.75, y = sz * 8.5)
 
         self.algorithm_label = tk.Label(root, 
             text="Select Algorithm",
-            font=("Arial bold", 13),
-            background='gray'
+            font=("Arial", 13, "bold"),
+            background='gray',
+            # width=15,
+            # padx=5, pady=5
         )
         self.algorithm_label.place(x=sz * 12.5, y=sz * 0.25)
         self.algorithm_combobox = ttk.Combobox(root, 
             values=["DFS","BFS", "UCS", "A*"],
             state='readonly',
             width=10,
-            font=("Arial", 12)
+            font=("Arial", 12),
+            # padx=5, pady=5
         )
         self.actions = ''
         self.algorithm_combobox.set("select")  # Set default value
         self.algorithm_combobox.place(x=sz * 12 + sz * 3 // 4, y=sz * 0.75)
-        # self.algorithm_combobox.bind("<<ComboboxSelected>>", self.on_algorithm_selected)
-        # self.on_algorithm_selected(tk.Event())
-
         self.input_label = tk.Label(root, 
             text="Select Input",
-            font=("Arial bold", 13),
-            background='gray'
+            font=("Arial", 13, "bold"),
+            background='gray',
+            padx=5, pady=5
         )
         self.input_label.place(x=sz * 12.75, y=sz * 1.25)
         self.input_combobox = ttk.Combobox(root, 
-            values=["Input-01", "Input-02","Input-03","Input-04"],
+            values=['input-' + (str(i) if i >= 10 else '0' + str(i)) for i in range(1, 11)],
             state='readonly',
             width=10,
-            font=("Arial", 12)
+            font=("Arial", 12),
+            # padx=5, pady=5
         )
         self.input_combobox.set("select")  # Set default value
         self.input_combobox.place(x=sz * 12 + sz * 3 // 4, y=sz * 1.75)
@@ -168,7 +180,7 @@ class App:
         self.loading_label = tk.Label(
             root,
             text = 'Status: ',
-            font=("Arial bold", 13),
+            font=("Arial", 13, "bold"),
             background='gray',
         )
         self.loading_label.place(x = 12.5 * sz, y = 3 * sz)
@@ -185,19 +197,19 @@ class App:
 
     def run_algorithm(self, selected_algorithm):
         if selected_algorithm == 'DFS':
-            self.actions, steps, weight, node, time, memory = dfs(self.file_name)
+            self.actions, self.steps, self.weight, self.node, self.time, self.memory = dfs(self.file_name)
         elif selected_algorithm == 'BFS':
-            self.actions, steps, weight, node, time, memory = bfs(self.file_name)
+            self.actions, self.steps, self.weight, self.node, self.time, self.memory = bfs(self.file_name)
         elif selected_algorithm == 'UCS':
-            self.actions, steps, weight, node, time, memory = ucs(self.file_name)
+            self.actions, self.steps, self.weight, self.node, self.time, self.memory = ucs(self.file_name)
         elif selected_algorithm == 'A*':
-            self.actions, steps, weight, node, time, memory = a_star(self.file_name)
-        self.root.after(0, self.finish_loading, steps, weight, node, time, memory)
+            self.actions, self.steps, self.weight, self.node, self.time, self.memory = a_star(self.file_name)
+        self.root.after(0, self.finish_loading)
 
-    def finish_loading(self, steps, weight, node, time, memory):
+    def finish_loading(self):
         self.loading = False
         self.dots = 0
-        self.display_info(steps, weight, node, time, memory)
+        self.display_info()
         self.restart()
         self.loading_label.config(text="Status: Done!")
 
@@ -214,12 +226,12 @@ class App:
         if self.file_name is None: return
         matrix = [[]]
         self.clear_map()
-        self.W, self.H, player_pos, stones_pos, self.switches_pos, walls_pos = readMap(matrix, self.file_name)
+        self.W, self.H, player_pos, self.stones_pos, self.switches_pos, walls_pos = readMap(matrix, self.file_name)
         for i in range(self.H):
             for j in range(self.W):
                 self.root.after(10, lambda pos=(i,j): self.drawCell(pos))
         self.root.after(20, lambda: self.drawCell(player_pos, self.player_image))
-        for i in stones_pos:
+        for i in self.stones_pos:
             self.root.after(20, lambda pos=i: self.drawCell(pos, self.crate_image))
         for i in self.switches_pos:
             self.root.after(20, lambda pos=i: self.drawCell(pos, self.goal_image))
@@ -228,29 +240,27 @@ class App:
         self.running = False
         self.player_pos = player_pos 
         self.animation_state = 0
+        self.current_step = 0
+        self.current_weight = 0
+        self.display_info()
         self.loading_label.config(text="Status: ")
 
     def clear_map(self):
         for i in range(self.H):
             for j in range(self.W):
                 self.drawCell((i, j))
-        # self.canvas.create_line(768, 0, 768, 640)
 
     def start(self):
         if not self.running:
             self.running = True
             self.animate() 
         
-    def display_info(self, steps, weight, node, time, memory):
-        self.info_label.config(text = f'Steps: {steps}\n \
-                                       Weight: {weight}\n \
-                                       Node: {node}\n \
-                                       Time (ms): {time:.2f}\n \
-                                       Memory (MB): {memory / 1e6:.2f}')
-        # self.weight_label.config(text = weight)
-        # self.node_label.config(text = node)
-        # self.time_label.config(text = time)
-        # self.memory_label.config(text = memory)
+    def display_info(self):
+        self.info_label.config(text = f'Steps: {self.current_step}/{self.steps}\n \
+                                       Weight: {self.current_weight}/{self.weight}\n \
+                                       Node: {self.node}\n \
+                                       Time (ms): {self.time * 1000:.2f}\n \
+                                       Memory (MB): {self.memory / 1e6:.2f}')
 
     def stop(self):
         self.running = False
@@ -263,7 +273,16 @@ class App:
                 self.drawCell(self.player_pos)
                 self.player_pos = self.move(self.player_pos, actionsMap.find(self.actions[self.animation_state]))
                 self.drawCell(self.player_pos, self.player_image)
+                if self.actions[self.animation_state].isupper():
+                    new_stones_pos = tuple(pos for pos in self.stones_pos if (pos[0], pos[1]) != tuple(self.player_pos))
+                    pushed_stones = [pos for pos in self.stones_pos if (pos[0], pos[1]) == tuple(self.player_pos)][0]
+                    i = actionsMap.find(self.actions[self.animation_state]) % 4
+                    self.current_weight += pushed_stones[2]
+                    new_stones_pos += ((pushed_stones[0] + dx[i], pushed_stones[1] + dy[i], pushed_stones[2]), )
+                    self.stones_pos = new_stones_pos
                 self.animation_state += 1
+                self.current_step += 1
+                self.display_info()
                 self.root.after(self.speed, self.animate)
             else:
                 self.loading_label.config(text="Status: Done!")
@@ -295,10 +314,15 @@ class App:
             self.drawCell(i, self.goal_image)
         return pos
 
-def run():
+def run(speed = 400):
     root = tk.Tk()
-    app = App(root)
+    app = App(root, speed)
     root.mainloop()
 
 if __name__ == "__main__":
-    run()
+    if len(sys.argv) > 1:
+        assert len(sys.argv) == 2, "Invalid number of arguments."
+        assert sys.argv[1].isdigit(), "Input must be a number."
+        visualize(sys.argv[1])
+    else:
+        run()

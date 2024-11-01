@@ -1,12 +1,12 @@
 A*
-Steps: 26, Weight: 56, Nodes: 3482, Time (ms): 40.85, Memory (MB): 0.20
-ddDuLLUluRRRRRlldddldRRRRR
+Steps: 62, Weight: 65, Nodes: 10693, Time (ms): 103.92, Memory (MB): 0.00
+ruLuulllldddrrURldlluuurrrrdDllULulDrrdrrrddlUruLLruulLdDulluR
 UCS
-Steps: 26, Weight: 56, Nodes: 541788, Time (ms): 4505.59, Memory (MB): 87.05
-ddDldRRRRRlllluuLLUluRRRRR
+Steps: 62, Weight: 65, Nodes: 15251, Time (ms): 93.01, Memory (MB): 0.00
+ruLuulllldddrrURldlluuurrrrdDllULulDrrdrrrddlUruLLruulLdDulluR
 DFS
-Steps: 927, Weight: 908, Nodes: 34839, Time (ms): 38410.15, Memory (MB): 0.00
-ddDuuuldDuulDDuulddddrUdluuuurrddLddluUddruuuulDDuurddddrUdluuuurdDuurdddLdlUdlUdruUddluUddruurddRuuuullDDuulDDuurddrddlUdlUdruUddruuuulDDuurddddlluUddrUdluuRddruUddluuuulDDuurddddlUdruuuurDDuulddddluUddruuuulDDuurddddrUdluuuurdDuurddddRluuuulddlddlUdruuuurddrddlUdluuuuldDuurddddlUUddruuuurdDuulddddrUdruuLddluUddruuuulDDuulDDuurddrddlUdlUdruUddruuuulDDuurddddlluUddrruuuurddddrRlluuuulddddlUdluuRddruUddluuuulDDuurddddlUdruuuurDDuulddddluUddruuuulDDuurddddrUdluuuurdDuurddddrrRllluuuulddlddlUdruuuurddrddlUdluuuuldDuurddddlUUddruuuurdDuulddddrUdruuLddluUddruuuulDDuulDDuurddrddlUdlUdruUddruuuulDDuurddddlluUddrruuuurddddrrrRlllluuuulddddlUdluuRddruUddluuuulDDuurddddlUdruuuurDDuulddddluUddruuuulDDuurddddrUdluuuurdDuurdddLdlUdlUdruUddluUddruurddruuuulllDDuurrddddluuUdddlUdruuulDuuRddddlUdruuuuRddddluuuuldDuurddddlUUddruuuurRddddluuuullDDuurddddlUdruuuurddddruuuuRlddddluuuulddddluUddruuuulDDuurddddruuuurrRllddddluuuulddddlU
+Steps: 199, Weight: 165, Nodes: 14726, Time (ms): 6284.50, Memory (MB): 0.00
+druuLuulldDuullddddrrUURlddluluuurrDDuullddddrrUdluluuurrrrdDuulldDuullddddrrUUUdddluluuurRdLulDDuurdrdddllUdrururruuLLddrrrddlUdruuLuullddRlullDurrurrdDuulldlluRdrdddllUdrururrrddlUdruuLLruulLdDulluR
 BFS
-Steps: 24, Weight: 56, Nodes: 130351, Time (ms): 844.55, Memory (MB): 4.14
-ddLLUluRRRRRllddDldRRRRR
+Steps: 62, Weight: 75, Nodes: 15307, Time (ms): 77.90, Memory (MB): 0.00
+ruLuulldDRluurrdDuulllldddrdrUUULulDrrdrrrddlUruLLruulLdDulluR
