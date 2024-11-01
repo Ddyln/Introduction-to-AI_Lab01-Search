@@ -155,7 +155,7 @@ class App:
         )
         self.input_label.place(x=sz * 12.75, y=sz * 1.25)
         self.input_combobox = ttk.Combobox(root, 
-            values=["input-01", "input-02", "Input-03", "Input-04", "Input-06"], 
+            values=["input-01", "input-02", "input-03", "input-04", "input-06"], 
             state='readonly',
             width=10,
             font=("Arial", 12),

@@ -98,7 +98,7 @@ def a_star(file_name = 'input-01.txt'):
     explored_set = set()
     time = TIME.time()
     max_memory = memory
-    steps = 0
+    steps = -1
     while frontier.is_empty() == False:
         topQueue = frontier.pop()
         player_pos = topQueue[0]

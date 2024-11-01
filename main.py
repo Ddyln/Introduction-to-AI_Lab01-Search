@@ -10,7 +10,7 @@ def visualize():
     vsl.run()
 
 def runAll():
-    for i in range(1, 11):
+    for i in range(1, 3):
         ch = ('0' if i < 10 else '') + str(i)
         file_name = 'input-' + ch + '.txt'
         if os.path.isfile(file_name):
