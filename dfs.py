@@ -166,11 +166,11 @@ def dfs(file_name):
             
             node += 1
             frontier.append(((x, y), new_stones, new_weight, actions + moves[i+t]))
-        steps = len(actions)
+    steps = len(actions)
     return actions, steps , weight, node, time, memory
 
 if __name__ == '__main__':
-    file_name = 'input-03.txt'
+    file_name = 'input-01.txt'
     actions, steps, weight, node, time, memory = dfs(file_name)
     f = open(file_name.replace('in', 'out'), 'w')
     f.write('DFS\n')
