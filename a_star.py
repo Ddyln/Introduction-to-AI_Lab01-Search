@@ -141,6 +141,8 @@ def a_star(file_name = 'input-01.txt'):
                             new_weight,
                             new_g), 
                             new_g + heuristicCost(new_stones_pos, switches_pos))
+    while not frontier.is_empty: frontier.pop()
+    del frontier, explored, switches_pos, stones_info, walls_pos
     return actions, steps, weight, node, time, memory
 
 if __name__ == '__main__':

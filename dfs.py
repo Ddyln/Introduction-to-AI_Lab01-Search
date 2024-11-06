@@ -167,6 +167,8 @@ def dfs(file_name):
             node += 1
             frontier.append(((x, y), new_stones, new_weight, actions + moves[i+t]))
     steps = len(actions)
+    while len(frontier) > 0: frontier.pop()
+    del frontier, visited, switches, stones, walls
     return actions, steps , weight, node, time, memory
 
 if __name__ == '__main__':

@@ -138,7 +138,8 @@ def bfs(file_name):
 
             node += 1  # Count the number of nodes created
             frontier.append(([x, y], steps + 1, new_stones_pos, new_weight, actions + actionsMap[i + t]))
-
+    while len(frontier) > 0: frontier.pop()
+    del frontier, explored_set, switches_pos, stones_pos, walls_pos
     return actions, steps, weight, node, time, memory
 
 if __name__ == '__main__':

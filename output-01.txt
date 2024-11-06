@@ -1,7 +1,3 @@
-DFS
-Steps: 42
-Weight: 893
-Nodes: 555
-Time (ms): 8.39
-Memory (MB): 0.00
-uuuldDuurdddLuuurdddrUdluuurDDuuldddRRRRRR
+A*
+Steps: 24, Weight: 405, Nodes: 6836, Time (ms): 34.48, Memory (MB): 1.84
+lluRurrDrdLLLuRRRRRRRurD

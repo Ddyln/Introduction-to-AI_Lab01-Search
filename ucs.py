@@ -178,7 +178,8 @@ def ucs(file_name = 'input.txt'):
     memory_consumed = final_memory - initial_memory
 
     steps = len(actions)    # Calculate the number of steps
-
+    while not frontier.is_empty: frontier.pop()
+    del frontier, explored, switches_pos, stones_info, walls_pos
     return actions, steps, stones_weight, node, time_taken, memory_consumed
 
 if __name__ == '__main__':
