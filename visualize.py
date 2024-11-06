@@ -58,13 +58,13 @@ dy = [0, 1, 0, -1]
 class App:
     def __init__(self, root, speed):
         self.root = root
-        self.width = 64 * 23.2
-        self.height = 64 * 15
+        self.width = 64 * 15
+        self.height = 64 * 10
         self.canvas = tk.Canvas(root, width=self.width, height=self.height, bg='gray')
         self.root.resizable(False, False)
         self.canvas.pack()
-        for i in range(15):
-            for j in range(20):
+        for i in range(10):
+            for j in range(12):
                 self.drawCell((i, j))
         # self.canvas.create_line(768, 0, 768, 640)
         self.root.title("Search Visualization")
@@ -90,7 +90,7 @@ class App:
             height=1,
             padx=5, pady=5
         )
-        self.button.place(x = sz * 21.0, y = sz * 2.35)
+        self.button.place(x = sz * 13.1, y = sz * 2.35)
         
         self.button = tk.Button(
             root, 
@@ -100,7 +100,7 @@ class App:
             height=2,
             padx=5, pady=5
         )
-        self.button.place(x = sz * 20.15, y = sz * 7.25)
+        self.button.place(x = sz * 12.25, y = sz * 7.25)
         
         self.button = tk.Button(
             root, 
@@ -110,7 +110,7 @@ class App:
             height=2, 
             padx=5, pady=5
         )
-        self.button.place(x = sz * 21.75, y = sz * 7.25)
+        self.button.place(x = sz * 13.75, y = sz * 7.25)
 
         self.button = tk.Button(
             root, 
@@ -120,7 +120,7 @@ class App:
             height=2,
             padx=5, pady=5
         )
-        self.button.place(x = sz * 20.15, y = sz * 8.5)
+        self.button.place(x = sz * 12.25, y = sz * 8.5)
         
         self.button = tk.Button(
             root, 
@@ -130,7 +130,7 @@ class App:
             height=2,
             padx=5, pady=5
         )
-        self.button.place(x = sz * 21.75, y = sz * 8.5)
+        self.button.place(x = sz * 13.75, y = sz * 8.5)
 
         self.algorithm_label = tk.Label(root, 
             text="Select Algorithm",
@@ -139,8 +139,7 @@ class App:
             # width=15,
             # padx=5, pady=5
         )
-        self.algorithm_label.place(x=sz * 20.1, y=sz * 0.25)
-
+        self.algorithm_label.place(x=sz * 12.5, y=sz * 0.25)
         self.algorithm_combobox = ttk.Combobox(root, 
             values=["DFS","BFS", "UCS", "A*"],
             state='readonly',
@@ -157,8 +156,7 @@ class App:
             background='gray',
             padx=5, pady=5
         )
-        self.input_label.place(x=sz * 20.75, y=sz * 1.25)
-
+        self.input_label.place(x=sz * 12.75, y=sz * 1.25)
         self.input_combobox = ttk.Combobox(root, 
             values=['input-' + (str(i) if i >= 10 else '0' + str(i)) for i in range(1, 11)],
             state='readonly',
@@ -167,8 +165,7 @@ class App:
             # padx=5, pady=5
         )
         self.input_combobox.set("select")  # Set default value
-        self.input_combobox.place(x=sz * 20 + sz * 3 // 4, y=sz * 1.75)
-
+        self.input_combobox.place(x=sz * 12 + sz * 3 // 4, y=sz * 1.75)
         self.info_label = tk.Label(
             root, 
             text="Steps:\n\nWeight:\n\nNode:\n\nTime:\n\nMemory:",
@@ -177,7 +174,7 @@ class App:
             justify="left",
             wraplength=170
         )
-        self.info_label.place(x = 20.2 * sz, y = 3.5 * sz)
+        self.info_label.place(x = 12.2 * sz, y = 3.5 * sz)
         self.loading = False
 
         self.loading_label = tk.Label(
@@ -186,7 +183,7 @@ class App:
             font=("Arial", 13, "bold"),
             background='gray',
         )
-        self.loading_label.place(x = 20.5 * sz, y = 3 * sz)
+        self.loading_label.place(x = 12.5 * sz, y = 3 * sz)
         self.dots = 0
 
     def load(self):
