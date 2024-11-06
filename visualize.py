@@ -323,6 +323,6 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         assert len(sys.argv) == 2, "Invalid number of arguments."
         assert sys.argv[1].isdigit(), "Input must be a number."
-        visualize(sys.argv[1])
+        run(sys.argv[1])
     else:
         run()
